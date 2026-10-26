@@ -1,81 +1,403 @@
 
-
 <!DOCTYPE html>
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Army Smart Mess Management</title>
 <style>
+:root{--green:#183d2b;--light:#edf3ee;--white:#fff;--border:#dce5de}
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f1f5f2;color:#203328}
-header{background:#183d2b;color:white;padding:22px 16px}
+body{margin:0;background:#f3f6f3;color:#203328;font-family:Arial,sans-serif}
+header{background:var(--green);color:white;padding:20px}
 header h2{margin:0 0 7px}
-header p{margin:0;color:#d8e8dc}
-main{max-width:1000px;margin:auto;padding:18px}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px}
-.card{background:white;border-radius:12px;padding:18px;box-shadow:0 2px 8px #00000010}
-.card p{color:#627268;margin:0 0 12px}
-.card h2{margin:0;color:#205a3a}
-nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:22px}
-button{border:0;border-radius:9px;background:#24583b;color:white;padding:15px 8px;font-size:15px;cursor:pointer}
-button:hover{background:#183d2b}
-#message{background:white;border-radius:10px;padding:18px;margin-top:18px;min-height:90px}
-footer{text-align:center;padding:25px;color:#627268;font-size:13px}
+header p{margin:0;font-size:13px;color:#dce9df}
+.layout{display:grid;grid-template-columns:210px 1fr;min-height:85vh}
+aside{background:#fff;padding:15px;border-right:1px solid var(--border)}
+aside button{display:block;width:100%;text-align:left;margin-bottom:7px}
+main{padding:20px;min-width:0;max-width:1200px;width:100%;margin:auto}
+button{border:0;border-radius:7px;background:#24583b;color:white;padding:11px 13px;cursor:pointer}
+button:hover{opacity:.88}
+button.gray{background:#65736a}
+button.red{background:#a52d2d}
+input,select{width:100%;padding:11px;border:1px solid #cbd7ce;border-radius:7px;background:white;font-size:15px}
+label{font-size:13px;display:block;margin-bottom:5px}
+h3{margin-top:0}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin:18px 0}
+.card,.panel{background:white;border-radius:12px;padding:17px;box-shadow:0 2px 7px #0000000b;margin-bottom:16px}
+.card p{margin:0 0 12px;color:#627268;font-size:14px}
+.card strong{font-size:25px;color:#24583b}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:700px}
+th,td{text-align:left;padding:10px;border-bottom:1px solid #e2e8e3;font-size:13px}
+th{background:#edf3ee}
+.small{padding:7px;margin:2px;font-size:12px}
+.avatar{width:48px;height:48px;object-fit:cover;border-radius:50%;background:#e1e8e2}
+.hidden{display:none!important}
+.muted{font-size:13px;color:#68776d}
+#notice{margin-top:12px;color:#24583b}
+nav button{margin:3px}
+@media(max-width:650px){
+ .layout{grid-template-columns:1fr}
+ aside{display:flex;gap:6px;overflow-x:auto;border-right:0;border-bottom:1px solid var(--border)}
+ aside button{min-width:125px;margin:0}
+ main{padding:12px}
+ header{padding:16px}
+}
 </style>
 </head>
 <body>
 <header>
-<h2>Army Smart Mess</h2>
-<p>Mess Management System | Local Development</p>
+<h2>Army Smart Mess Management</h2>
+<p>Mess Administration · Demo Version</p>
 </header>
 
+<div class="layout">
+<aside>
+<button onclick="page('dashboard')">🏠 Dashboard</button>
+<button onclick="page('members')">👥 Member Management</button>
+<button onclick="page('meals')">🍛 Daily Meals</button>
+<button onclick="page('store')">📦 Store & Ration</button>
+<button onclick="page('purchase')">🛒 Purchase</button>
+<button onclick="page('finance')">💰 Income & Expenses</button>
+<button onclick="page('reports')">📊 Reports</button>
+</aside>
+
 <main>
-<h3>Dashboard / मुख्य पृष्ठ</h3>
-
+<section id="dashboard">
+<h3>मुख्य Dashboard</h3>
+<p class="muted">Mess को दैनिक गतिविधि र हिसाबको सारांश</p>
 <div class="cards">
-<div class="card"><p>Mess Members</p><h2 id="members">0</h2></div>
-<div class="card"><p>आजको खाना</p><h2 id="meals">0</h2></div>
-<div class="card"><p>स्टोरका सामान</p><h2 id="stock">0</h2></div>
-<div class="card"><p>आजको खर्च</p><h2 id="expense">रु. 0</h2></div>
+<div class="card"><p>कुल सदस्य</p><strong id="total">0</strong></div>
+<div class="card"><p>Active सदस्य</p><strong id="active">0</strong></div>
+<div class="card"><p>आजको खाना</p><strong id="mealsTotal">0</strong></div>
+<div class="card"><p>स्टोरका वस्तु</p><strong id="itemsTotal">0</strong></div>
+<div class="card"><p>जम्मा आम्दानी</p><strong id="incomeTotal">रु. 0</strong></div>
+<div class="card"><p>जम्मा खर्च</p><strong id="expenseTotal">रु. 0</strong></div>
 </div>
-
-<h3>व्यवस्थापनका विकल्प</h3>
+<div class="panel">
+<h3>छिटो काम सुरु गर्नुहोस्</h3>
 <nav>
-
-<a href="members.html" style="
-  display:block;
-  text-align:center;
-  text-decoration:none;
-  border-radius:9px;
-  background:#24583b;
-  color:white; 
-  padding:15px 8px;
-  font-size:15px;
-">
-  सदस्य व्यवस्थापन
-</a>
-
-<button onclick="showPage('दैनिक खाना')">दैनिक खाना</button>
-<button onclick="showPage('रासन तथा स्टोर')">रासन तथा स्टोर</button>
-<button onclick="showPage('खरिद विवरण')">खरिद विवरण</button>
-<button onclick="showPage('आम्दानी तथा खर्च')">आम्दानी तथा खर्च</button>
-<button onclick="showPage('रिपोर्ट')">रिपोर्ट</button>
+<button onclick="page('members')">+ सदस्य थप्नुहोस्</button>
+<button onclick="page('meals')">खाना विवरण</button>
+<button onclick="page('store')">स्टोर खोल्नुहोस्</button>
+<button onclick="page('finance')">खर्च राख्नुहोस्</button>
 </nav>
-
-<div id="message">
-<h3>स्वागत छ!</h3>
-<p>Army Mess Management System को प्रारम्भिक Dashboard तयार छ।</p>
 </div>
-</main>
+<div class="panel">
+<h3>महत्त्वपूर्ण जानकारी</h3>
+<p class="muted">यो हाल ब्राउजरमा चल्ने परीक्षण संस्करण हो। वास्तविक हिसाबका लागि Database, Login र Backup थप्न बाँकी छ।</p>
+</div>
+</section>
 
-<footer>Army Smart Mess Management System · Development Version</footer>
+<section id="members" class="hidden">
+<div class="panel">
+<h3 id="formTitle">नयाँ सदस्य थप्नुहोस्</h3>
+<form id="memberForm">
+<input type="hidden" id="editId">
+<div class="grid">
+<div><label>Demo Member ID *</label><input id="number" maxlength="30" required placeholder="DEMO-001"></div>
+<div><label>Rank / पद *</label>
+<select id="rank">
+<option>Constable</option>
+<option>Head Constable (HC)</option>
+<option>Havaldar</option>
+<option>JCO</option>
+<option>Officer</option>
+<option>Other Rank</option>
+<option>अन्य / Custom</option>
+</select>
+</div>
+<div id="customRankBox" class="hidden"><label>आफ्नो Rank लेख्नुहोस्</label><input id="customRank" maxlength="60"></div>
+<div><label>पूरा नाम *</label><input id="name" maxlength="100" required></div>
+<div><label>Unit / उप-एकाइ</label><input id="unit" maxlength="80"></div>
+<div><label>Mess Duty / जिम्मेवारी</label>
+<select id="duty">
+<option>सदस्य</option>
+<option>Mess Commander</option>
+<option>Mess NCO</option>
+<option>Cook</option>
+<option>Assistant Cook</option>
+<option>Storekeeper</option>
+<option>Mess Staff</option>
+<option>अन्य</option>
+</select>
+</div>
+<div><label>Joining Date</label><input id="joined" type="date"></div>
+<div><label>स्थिति</label><select id="status"><option>Active</option><option>Inactive</option></select></div>
+<div><label>फोटो (सानो आकारमा सुरक्षित हुन्छ)</label><input id="photo" type="file" accept="image/jpeg,image/png,image/webp"></div>
+</div>
+<p class="muted">फोटो ब्राउजरमै WebP मा Compress गर्ने प्रयास गरिन्छ। ठूलो फोटो अपलोड गर्दा केही समय लाग्न सक्छ।</p>
+<div class="actions">
+<button type="submit">Save Member</button>
+<button type="button" class="gray" onclick="resetForm()">Cancel / Reset</button>
+</div>
+</form>
+<div id="notice" role="status"></div>
+</div>
+
+<div class="panel">
+<h3>सदस्य सूची</h3>
+<div class="grid">
+<div><label>Search</label><input id="search" placeholder="नाम, ID, Rank, Duty खोज्नुहोस्"></div>
+<div><label>स्थिति</label><select id="filter"><option>All</option><option>Active</option><option>Inactive</option></select></div>
+</div>
+<p id="memberCount" class="muted"></p>
+<div class="tablewrap">
+<table>
+<thead><tr><th>Photo</th><th>Demo ID</th><th>नाम</th><th>Rank</th><th>Duty</th><th>Unit</th><th>Status</th><th>कार्य</th></tr></thead>
+<tbody id="rows"></tbody>
+</table>
+</div>
+<p id="empty" class="muted">सदस्य थपिएको छैन।</p>
+</div>
+</section>
+
+<section id="meals" class="hidden">
+<div class="panel">
+<h3>Daily Meals</h3>
+<p>Breakfast, Lunch, Dinner र Guest Meal को दर्ता अर्को चरणमा जोडिनेछ।</p>
+<p class="muted">खानाको संख्या र दैनिक खपतलाई सदस्य सूची तथा स्टोरसँग जोडेर हिसाब मिलाइनेछ।</p>
+</div>
+</section>
+
+<section id="store" class="hidden">
+<div class="panel">
+<h3>Store & Ration</h3>
+<p>चामल, दाल, तेल, तरकारी, मासु, ग्यास र अन्य सामानको स्टक रेकर्ड अर्को चरणमा जोडिनेछ।</p>
+</div>
+</section>
+
+<section id="purchase" class="hidden">
+<div class="panel">
+<h3>Purchase Management</h3>
+<p>Supplier, Bill Number, खरिद विवरण, सामान प्राप्ति र भुक्तानीको रेकर्ड अर्को चरणमा जोडिनेछ।</p>
+</div>
+</section>
+
+<section id="finance" class="hidden">
+<div class="panel">
+<h3>Income & Expenses</h3>
+<p>Cash Book, आम्दानी, खर्च, मासिक Closing र Balance को वास्तविक हिसाब अर्को चरणमा जोडिनेछ।</p>
+</div>
+</section>
+
+<section id="reports" class="hidden">
+<div class="panel">
+<h3>Reports</h3>
+<p>Daily, Monthly, Member, Store र Financial Reports अर्को चरणमा जोडिनेछन्।</p>
+</div>
+</section>
+</main>
+</div>
 
 <script>
-function showPage(name){
-document.getElementById("message").innerHTML =
-"<h3>"+name+"</h3><p>यो Module अर्को चरणमा तयार गरिनेछ। अहिले यो प्रारम्भिक नमुना हो।</p>";
+const KEY="armyMessDemoMembersV1";
+let members=[];
+let photoData="";
+
+function loadMembers(){
+ try{
+  const data=localStorage.getItem(KEY);
+  members=data?JSON.parse(data):[];
+  if(!Array.isArray(members))members=[];
+ }catch(e){members=[]}
 }
+
+function saveMembers(){
+ try{
+  localStorage.setItem(KEY,JSON.stringify(members));
+  return true;
+ }catch(e){
+  alert("Storage भरिएको वा बन्द छ। फोटो सानो पार्नुहोस् वा पुराना परीक्षण डेटा हटाउनुहोस्। परिवर्तन सुरक्षित भएन।");
+  return false;
+ }
+}
+
+function page(id){
+ document.querySelectorAll("main section").forEach(s=>s.classList.add("hidden"));
+ document.getElementById(id).classList.remove("hidden");
+ window.scrollTo(0,0);
+ if(id==="members")render();
+ updateDashboard();
+}
+
+function updateDashboard(){
+ document.getElementById("total").textContent=members.length;
+ document.getElementById("active").textContent=members.filter(m=>m.status==="Active").length;
+ document.getElementById("mealsTotal").textContent="—";
+ document.getElementById("itemsTotal").textContent="—";
+ document.getElementById("incomeTotal").textContent="—";
+ document.getElementById("expenseTotal").textContent="—";
+}
+
+document.getElementById("rank").addEventListener("change",()=>{
+ document.getElementById("customRankBox").classList.toggle("hidden",document.getElementById("rank").value!=="अन्य / Custom");
+});
+
+async function compressPhoto(file){
+ if(!file.type.startsWith("image/"))throw Error("फोटो फाइल छान्नुहोस्।");
+ if(file.size>12*1024*1024)throw Error("फोटो 12 MB भन्दा सानो छान्नुहोस्।");
+ const img=new Image();
+ const url=URL.createObjectURL(file);
+ try{
+  await new Promise((resolve,reject)=>{
+   img.onload=resolve;
+   img.onerror=()=>reject(Error("फोटो खोल्न सकिएन।"));
+   img.src=url;
+  });
+  const max=320;
+  const scale=Math.min(1,max/Math.max(img.width,img.height));
+  const canvas=document.createElement("canvas");
+  canvas.width=Math.max(1,Math.round(img.width*scale));
+  canvas.height=Math.max(1,Math.round(img.height*scale));
+  const ctx=canvas.getContext("2d");
+  ctx.drawImage(img,0,0,canvas.width,canvas.height);
+  let result=canvas.toDataURL("image/webp",0.62);
+  if(!result.startsWith("data:image/webp"))result=canvas.toDataURL("image/jpeg",0.65);
+  return result;
+ }finally{URL.revokeObjectURL(url)}
+}
+
+document.getElementById("photo").addEventListener("change",async function(){
+ const file=this.files[0];
+ if(!file)return;
+ const notice=document.getElementById("notice");
+ notice.textContent="फोटो Compress हुँदैछ...";
+ try{
+  photoData=await compressPhoto(file);
+  notice.textContent="फोटो तयार भयो। आकार घटाएर सुरक्षित गरिनेछ।";
+ }catch(e){
+  photoData="";
+  notice.textContent=e.message||"फोटो तयार भएन।";
+ }
+});
+
+function resetForm(){
+ document.getElementById("memberForm").reset();
+ document.getElementById("editId").value="";
+ document.getElementById("formTitle").textContent="नयाँ सदस्य थप्नुहोस्";
+ document.getElementById("customRankBox").classList.add("hidden");
+ document.getElementById("photo").value="";
+ photoData="";
+}
+
+document.getElementById("memberForm").addEventListener("submit",async function(e){
+ e.preventDefault();
+ const id=document.getElementById("editId").value;
+ const number=document.getElementById("number").value.trim();
+ const name=document.getElementById("name").value.trim();
+ const rankChoice=document.getElementById("rank").value;
+ const rank=rankChoice==="अन्य / Custom"
+  ?document.getElementById("customRank").value.trim():rankChoice;
+
+ if(!number||!name||!rank){alert("ID, नाम र Rank भर्नुहोस्।");return}
+ if(members.some(m=>m.number.toLowerCase()===number.toLowerCase()&&m.id!==id)){
+  alert("यो Demo Member ID पहिले नै छ।");return;
+ }
+
+ const old=members.find(m=>m.id===id);
+ const file=document.getElementById("photo").files[0];
+ let photo=old?old.photo||"": "";
+ if(file){
+  if(!photoData){
+   try{photoData=await compressPhoto(file)}
+   catch(err){alert(err.message);return}
+  }
+  photo=photoData;
+ }
+
+ const member={
+  id:id||Date.now().toString(36)+Math.random().toString(36).slice(2,7),
+  number,name,rank,
+  unit:document.getElementById("unit").value.trim(),
+  duty:document.getElementById("duty").value,
+  joined:document.getElementById("joined").value,
+  status:document.getElementById("status").value,
+  photo
+ };
+
+ const previous=members;
+ members=id?members.map(m=>m.id===id?member:m):[...members,member];
+ if(!saveMembers()){members=previous;return}
+ document.getElementById("notice").textContent="सदस्य सुरक्षित भयो।";
+ resetForm();
+ render();
+ updateDashboard();
+});
+
+function editMember(id){
+ const m=members.find(x=>x.id===id);
+ if(!m)return;
+ document.getElementById("editId").value=m.id;
+ document.getElementById("number").value=m.number;
+ document.getElementById("name").value=m.name;
+ document.getElementById("unit").value=m.unit||"";
+ document.getElementById("duty").value=m.duty||"सदस्य";
+ document.getElementById("joined").value=m.joined||"";
+ document.getElementById("status").value=m.status||"Active";
+ const ranks=[...document.getElementById("rank").options].map(o=>o.value);
+ if(ranks.includes(m.rank)){
+  document.getElementById("rank").value=m.rank;
+  document.getElementById("customRankBox").classList.add("hidden");
+ }else{
+  document.getElementById("rank").value="अन्य / Custom";
+  document.getElementById("customRankBox").classList.remove("hidden");
+  document.getElementById("customRank").value=m.rank;
+ }
+ photoData="";
+ document.getElementById("photo").value="";
+ document.getElementById("formTitle").textContent="सदस्य विवरण Edit";
+ page("members");
+ window.scrollTo(0,0);
+}
+
+function deleteMember(id){
+ if(!confirm("यो Demo सदस्य हटाउने हो?"))return;
+ const old=members;
+ members=members.filter(m=>m.id!==id);
+ if(!saveMembers()){members=old;return}
+ render();
+ updateDashboard();
+}
+
+function render(){
+ const q=document.getElementById("search").value.trim().toLowerCase();
+ const filter=document.getElementById("filter").value;
+ const list=members.filter(m=>
+  [m.number,m.name,m.rank,m.duty,m.unit].join(" ").toLowerCase().includes(q)&&
+  (filter==="All"||m.status===filter)
+ );
+ document.getElementById("memberCount").textContent="कुल सदस्य: "+members.length+" | देखाइएको: "+list.length;
+ document.getElementById("empty").classList.toggle("hidden",list.length>0);
+ document.getElementById("rows").innerHTML=list.map(m=>`
+ <tr>
+ <td>${m.photo?`<img class="avatar" src="${m.photo}" alt="Member photo">`:"—"}</td>
+ <td>${esc(m.number)}</td><td>${esc(m.name)}</td><td>${esc(m.rank)}</td>
+ <td>${esc(m.duty||"सदस्य")}</td><td>${esc(m.unit||"—")}</td><td>${esc(m.status)}</td>
+ <td><button class="small" data-edit="${esc(m.id)}">Edit</button>
+ <button class="small red" data-delete="${esc(m.id)}">Delete</button></td>
+ </tr>`).join("");
+}
+
+function esc(v){
+ return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+document.getElementById("rows").addEventListener("click",e=>{
+ const edit=e.target.closest("[data-edit]");
+ const del=e.target.closest("[data-delete]");
+ if(edit)editMember(edit.dataset.edit);
+ if(del)deleteMember(del.dataset.delete);
+});
+document.getElementById("search").addEventListener("input",render);
+document.getElementById("filter").addEventListener("change",render);
+
+loadMembers();
+render();
+updateDashboard();
 </script>
 </body>
 </html>
