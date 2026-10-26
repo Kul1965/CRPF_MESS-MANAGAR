@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mess Data Backup</title>
+<style>
+body{font-family:Arial;background:#f1f5f2;padding:18px;color:#203328}
+main{max-width:500px;margin:auto;background:white;padding:20px;border-radius:12px}
+button{padding:12px;border:0;border-radius:7px;background:#24583b;color:white;margin:5px 0;width:100%}
+textarea{width:100%;height:130px;box-sizing:border-box;margin:10px 0}
+</style>
+</head>
+<body>
+<main>
+<h2>Army Mess — Demo Backup</h2>
+<p>यो पेजले नमुना डेटा फोनको ब्राउजरमा सुरक्षित गर्छ।</p>
+<button onclick="saveData()">नमुना डेटा सुरक्षित गर्नुहोस्</button>
+<button onclick="showData()">सुरक्षित डेटा हेर्नुहोस्</button>
+<button onclick="downloadData()">Backup डाउनलोड गर्नुहोस्</button>
+<textarea id="output" placeholder="डेटा यहाँ देखिन्छ"></textarea>
+<p id="status"></p>
+</main>
+<script>
+const KEY="messDemoBackupV1";
+
+function saveData(){
+ const sample={
+  version:1,
+  savedAt:new Date().toISOString(),
+  members:[],
+  meals:[],
+  stock:[],
+  expenses:[]
+ };
+ try{
+  localStorage.setItem(KEY,JSON.stringify(sample));
+  document.getElementById("status").textContent=
+   "नमुना डेटा यो ब्राउजरमा सुरक्षित भयो।";
+ }catch(e){
+  document.getElementById("status").textContent=
+   "डेटा सुरक्षित गर्न सकिएन।";
+ }
+}
+
+function showData(){
+ try{
+  document.getElementById("output").value=
+   localStorage.getItem(KEY)||"अहिलेसम्म डेटा सुरक्षित गरिएको छैन।";
+ }catch(e){
+  document.getElementById("status").textContent=
+   "ब्राउजरको Storage उपलब्ध छैन।";
+ }
+}
+
+function downloadData(){
+ try{
+  const data=localStorage.getItem(KEY);
+  if(!data){
+   alert("पहिले डेटा सुरक्षित गर्नुहोस्।");
+   return;
+  }
+  const blob=new Blob([data],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="mess-demo-backup.json";
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+ }catch(e){
+  alert("Backup डाउनलोड गर्न सकिएन।");
+ }
+}
+</script>
+</body>
+</html>
