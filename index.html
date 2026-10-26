@@ -1,1 +1,68 @@
 
+
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Army Smart Mess Management</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f1f5f2;color:#203328}
+header{background:#183d2b;color:white;padding:22px 16px}
+header h2{margin:0 0 7px}
+header p{margin:0;color:#d8e8dc}
+main{max-width:1000px;margin:auto;padding:18px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px}
+.card{background:white;border-radius:12px;padding:18px;box-shadow:0 2px 8px #00000010}
+.card p{color:#627268;margin:0 0 12px}
+.card h2{margin:0;color:#205a3a}
+nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:22px}
+button{border:0;border-radius:9px;background:#24583b;color:white;padding:15px 8px;font-size:15px;cursor:pointer}
+button:hover{background:#183d2b}
+#message{background:white;border-radius:10px;padding:18px;margin-top:18px;min-height:90px}
+footer{text-align:center;padding:25px;color:#627268;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+<h2>Army Smart Mess</h2>
+<p>Mess Management System | Local Development</p>
+</header>
+
+<main>
+<h3>Dashboard / मुख्य पृष्ठ</h3>
+
+<div class="cards">
+<div class="card"><p>Mess Members</p><h2 id="members">0</h2></div>
+<div class="card"><p>आजको खाना</p><h2 id="meals">0</h2></div>
+<div class="card"><p>स्टोरका सामान</p><h2 id="stock">0</h2></div>
+<div class="card"><p>आजको खर्च</p><h2 id="expense">रु. 0</h2></div>
+</div>
+
+<h3>व्यवस्थापनका विकल्प</h3>
+<nav>
+<button onclick="showPage('सदस्य व्यवस्थापन')">सदस्य व्यवस्थापन</button>
+<button onclick="showPage('दैनिक खाना')">दैनिक खाना</button>
+<button onclick="showPage('रासन तथा स्टोर')">रासन तथा स्टोर</button>
+<button onclick="showPage('खरिद विवरण')">खरिद विवरण</button>
+<button onclick="showPage('आम्दानी तथा खर्च')">आम्दानी तथा खर्च</button>
+<button onclick="showPage('रिपोर्ट')">रिपोर्ट</button>
+</nav>
+
+<div id="message">
+<h3>स्वागत छ!</h3>
+<p>Army Mess Management System को प्रारम्भिक Dashboard तयार छ।</p>
+</div>
+</main>
+
+<footer>Army Smart Mess Management System · Development Version</footer>
+
+<script>
+function showPage(name){
+document.getElementById("message").innerHTML =
+"<h3>"+name+"</h3><p>यो Module अर्को चरणमा तयार गरिनेछ। अहिले यो प्रारम्भिक नमुना हो।</p>";
+}
+</script>
+</body>
+</html>
